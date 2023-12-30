@@ -1,0 +1,15 @@
+int a;
+
+int main(int m, int n)
+{
+    int b = read();
+
+    int c;
+    int d = 9;
+    if (1 == 2){
+        m = 6;
+    }
+    int e[5];
+
+    return 0;
+}
