@@ -273,4 +273,13 @@ Program (1)
                                   INT: -1
                               RP: )
                             SEMI: ;
-                          
+                          Epsilon (0)
+                        RC: }
+                  StmtList (31)
+                    Stmt (31)
+                      RETURN: return
+                      Exp (31)
+                        INT: 0
+                    Epsilon (0)
+            RC: }
+        Epsilon (0)

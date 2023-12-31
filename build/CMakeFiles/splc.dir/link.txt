@@ -1,1 +1,0 @@
-/usr/bin/c++ -g CMakeFiles/splc.dir/src/parse_tree.c.o CMakeFiles/splc.dir/src/semantic.c.o CMakeFiles/splc.dir/src/symbol.c.o CMakeFiles/splc.dir/src/type.c.o CMakeFiles/splc.dir/src/yyerror_ow.c.o CMakeFiles/splc.dir/syntax.tab.c.o CMakeFiles/splc.dir/src/ir_gen.cpp.o -o splc 

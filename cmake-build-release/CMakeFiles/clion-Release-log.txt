@@ -1,6 +1,0 @@
-/snap/clion/261/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=/snap/clion/261/bin/ninja/linux/x64/ninja -G Ninja -S /home/mango/workspace/CS323-Compilers/CS323_Compiler -B /home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-release
-/home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-release
-/home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-release/syntax.tab.c/home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-release/syntax.tab.h
--- Configuring done (0.0s)
--- Generating done (0.0s)
--- Build files have been written to: /home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-release

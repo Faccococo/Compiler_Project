@@ -193,9 +193,9 @@ string translate_stmt(Node *stmt) {
             string lb1 = new_label();
             string lb2 = new_label();
             string code1 = translate_cond_exp(child->right->right, lb1, lb2);
-            string code2 = "LABEL " + lb1 + ":\n";
+            string code2 = "LABEL " + lb1 + " :\n";
             string code3 = translate_stmt(child->right->right->right->right);
-            string code4 = "LABEL " + lb2 + ":\n";
+            string code4 = "LABEL " + lb2 + " :\n";
             return code1 + code2 + code3 + code4;
         } else {
             // |    IF LP Exp RP Stmt ELSE Stmt
@@ -203,12 +203,12 @@ string translate_stmt(Node *stmt) {
             string lb2 = new_label();
             string lb3 = new_label();
             string code1 = translate_cond_exp(child->right->right, lb1, lb2);
-            string code2 = "LABEL " + lb1 + ":\n";
+            string code2 = "LABEL " + lb1 + " :\n";
             string code3 = translate_stmt(child->right->right->right->right);
             string code4 = "GOTO " + lb3 + "\n";
-            string code5 = "LABEL " + lb2 + ":\n";
+            string code5 = "LABEL " + lb2 + " :\n";
             string code6 = translate_stmt(child->right->right->right->right->right->right);
-            string code7 = "LABEL " + lb3 + ":\n";
+            string code7 = "LABEL " + lb3 + " :\n";
             return code1 + code2 + code3 + code4 + code5 + code6 + code7;
         }
     } else if (!strcmp(child->name, "WHILE")) {
@@ -216,12 +216,12 @@ string translate_stmt(Node *stmt) {
         string lb1 = new_label();
         string lb2 = new_label();
         string lb3 = new_label();
-        string code1 = "LABEL " + lb1 + ":\n";
+        string code1 = "LABEL " + lb1 + " :\n";
         string code2 = translate_cond_exp(child->right->right, lb2, lb3);
-        string code3 = "LABEL " + lb2 + ":\n";
+        string code3 = "LABEL " + lb2 + " :\n";
         string code4 = translate_stmt(child->right->right->right->right);
         string code5 = "GOTO " + lb1 + "\n";
-        string code6 = "LABEL " + lb3 + ":\n";
+        string code6 = "LABEL " + lb3 + " :\n";
         return code1 + code2 + code3 + code4 + code5 + code6;
     }
     return "";
@@ -339,9 +339,9 @@ string translate_exp(Node *exp, string &place) {
             string lb2 = new_label();
             string code0 = place + " := " + "#0" + "\n";
             string code1 = translate_cond_exp(exp, lb1, lb2);
-            string code2 = "LABEL " + lb1 + ":\n";
+            string code2 = "LABEL " + lb1 + " :\n";
             string code3 = place + " := " + "#1" + "\n";
-            string code4 = "LABEL " + lb2 + ":\n";
+            string code4 = "LABEL " + lb2 + " :\n";
             return code0 + code1 + code2 + code3 + code4;
         }
     } else if (!strcmp(child->name, "LP")) {
@@ -358,45 +358,46 @@ string translate_exp(Node *exp, string &place) {
         // |    ID
         // |    ID LP Args RP
         // |    ID LP RP
-        if (child->right == NULL) {
-            if (!strcmp(child->value_view, "read")) {
-                // |    READ
-                return "READ " + place + "\n";
-            } else {
-                // |    ID
-                place = new_place();
-                return place + " := " + child->value_view + "\n";
-            }
-        } else if (!strcmp(child->right->name, "LP")) {
-            if (!strcmp(child->value_view, "write")) {
-                // |    WRITE LP Args RP
-                Node *write_exp = child->right->right->left;
-                string tp = new_place();
-                string code1 = translate_exp(write_exp, tp);
-                string code2 = "WRITE " + tp + "\n";
-                return code1 + code2;
-            } else {
+
+        if (child->right == NULL){
+            // |    ID
+            place = new_place();
+            return place + " := " + child->value_view + "\n";
+        } else if (!strcmp(child->right->name, "LP")){
+            // |    ID LP Args RP
+            // |    ID LP RP
+            Node *LP = child->right;
+            string func_name = child->value_view;
+            if (!strcmp(LP->right->name, "Args")) {
                 // |    ID LP Args RP
-                // |    ID LP RP
-                Node *LP = child->right;
-                string func_name = child->value_view;
-                if (!strcmp(LP->right->name, "Args")) {
-                    // |    ID LP Args RP
+                if (!strcmp(func_name.c_str(), "write")) {
                     Node *args = LP->right;
-                    vector<string> arg_list;
-                    string code1 = translate_args(args, arg_list);
-                    string code2;
-                    for (const auto &arg: arg_list) {
-                        code2 += "ARG " + arg + "\n";
-                    }
-                    string code3 = place + " := " + "CALL " + func_name + "\n";
-                    return code1 + code2 + code3;
-                } else {
-                    // |    ID LP RP
-                    return place + " := " + "CALL " + func_name + "\n";
+                    string tp = new_place();
+                    string code1 = translate_exp(args->left, tp);
+                    string code2 = "WRITE " + tp + "\n";
+                    return code1 + code2;
                 }
+                Node *args = LP->right;
+                vector<string> arg_list;
+                string code1 = translate_args(args, arg_list);
+                string code2;
+                // for (const auto &arg: arg_list) {
+                //     code2 += "ARG " + arg + "\n";
+                // }
+                for (int i = arg_list.size() - 1; i >= 0; i--) {
+                    code2 += "ARG " + arg_list[i] + "\n";
+                }
+                string code3 = place + " := " + "CALL " + func_name + "\n";
+                return code1 + code2 + code3;
+            } else {
+                // |    ID LP RP
+                if (!strcmp(func_name.c_str(), "read")) {
+                    return "READ " + place + "\n";
+                }
+                return place + " := " + "CALL " + func_name + "\n";
             }
         }
+
     } else if (!strcmp(child->name, "INT")) {
         // |    INT
         int value = child->int_value;
@@ -455,7 +456,7 @@ string translate_cond_exp(Node *exp, string &lb_t, string &lb_f) {
         // |    Exp AND Exp
         string lb1 = new_label();
         string code1 = translate_cond_exp(child, lb1, lb_f);
-        string code2 = "LABEL " + lb1 + ":\n";
+        string code2 = "LABEL " + lb1 + " :\n";
         string code3 = translate_cond_exp(child->right->right, lb_t, lb_f);
         return code1 + code2 + code3;
 
@@ -463,7 +464,7 @@ string translate_cond_exp(Node *exp, string &lb_t, string &lb_f) {
         // |    Exp OR Exp
         string lb1 = new_label();
         string code1 = translate_cond_exp(child, lb_t, lb1);
-        string code2 = "LABEL " + lb1 + ":\n";
+        string code2 = "LABEL " + lb1 + " :\n";
         string code3 = translate_cond_exp(child->right->right, lb_t, lb_f);
         return code1 + code2 + code3;
 

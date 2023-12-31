@@ -1,4 +1,0 @@
-/home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-debug/CMakeFiles/lex_yy.dir
-/home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-debug/CMakeFiles/splc.dir
-/home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/mango/workspace/CS323-Compilers/CS323_Compiler/cmake-build-debug/CMakeFiles/rebuild_cache.dir

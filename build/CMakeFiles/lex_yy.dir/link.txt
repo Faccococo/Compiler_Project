@@ -1,2 +1,0 @@
-/usr/bin/ar qc liblex_yy.a CMakeFiles/lex_yy.dir/lex.yy.c.o
-/usr/bin/ranlib liblex_yy.a
