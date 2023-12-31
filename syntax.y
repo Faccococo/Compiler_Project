@@ -9,6 +9,7 @@
 
     FILE* file_out = NULL;
     FILE* tree_out = NULL;
+    FILE* ir_out = NULL;
     int errors = 0;
 
     #define PRINT_ERROR(type, error_node) { \
@@ -82,9 +83,9 @@
 Program: ExtDefList { 
         $$ = new_interior_node("Program", 1, $1);
         if (errors == 0) {
-            print_tree($$, 0, tree_out);
+            // print_tree($$, 0, tree_out);
             parse_program($$);
-            translate_program($$);
+            fprintf(ir_out, translate_program($$));
         }
     }
     ;
@@ -253,11 +254,17 @@ int main (int argc, char **argv)
     strcpy(tmp_tree + len - 3, "tre");
     tree_out = fopen(tmp_tree, "w");
 
+    char* tmp_ir = (char *)malloc(sizeof(char) * len);
+    strcpy(tmp_ir, argv[1]);
+    strcpy(tmp_ir + len - 3, "ir");
+    ir_out = fopen(tmp_ir, "w");
+
     printf("%s\n", tmp);
     printf("%s\n", tmp_tree);
 
     yyin = fopen(argv[1], "r");
     yyparse();
     
+    fclose(ir_out);
     fclose(file_out);
 }

@@ -63,13 +63,12 @@ int write_file(string data) {
 }
 
 extern "C" {
+
 char *translate_program(Node *program) {
     string ir = translate_ext_def_list(program->left);
 
     char *ir_cstr = new char[ir.length() + 1];
     strcpy(ir_cstr, ir.c_str());
-    write_file(ir);
-
     return ir_cstr;
 }
 }
@@ -253,7 +252,7 @@ string translate_dec_list(Node *dec_list) {
     string s1 = translate_dec(dec);
     if (dec->right != NULL) {
         // |   Dec COMMA DecList
-        string s2 = translate_dec_list(dec_list->right->right);
+        string s2 = translate_dec_list(dec->right->right);
         return s1 + s2;
     }
     return s1;
