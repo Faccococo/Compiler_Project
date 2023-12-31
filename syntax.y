@@ -141,9 +141,10 @@ ParamDec: Specifier VarDec { $$ = new_interior_node("ParamDec", 2, $1, $2); }
     ;
 
     /* statement */
-CompSt: LC DefList StmtList RC { $$ = new_interior_node("CompSt", 4, $1, $2, $3, $4); }
+CompSt: LC StmtList RC { $$ = new_interior_node("CompSt", 3, $1, $2, $3); }
     ;
-StmtList: Stmt StmtList { $$ = new_interior_node("StmtList", 2, $1, $2); }     
+StmtList: Stmt StmtList { $$ = new_interior_node("StmtList", 2, $1, $2); }
+    | DefList StmtList {$$ = new_interior_node("StmtList", 2, $1, $2); }
     | %empty { $$ = new_interior_node("Epsilon", -1); }
     ;
 Stmt: Exp SEMI { $$ = new_interior_node("Stmt", 2, $1, $2); }

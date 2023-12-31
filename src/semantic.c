@@ -293,7 +293,8 @@ Type *parse_exp(Node *exp) {
             } else {
                 type = exp1_type;
             }
-        } else if (!strcmp(child->right->name, "AND") ||
+        }
+        else if (!strcmp(child->right->name, "AND") ||
                    !strcmp(child->right->name, "OR")) {
             // |    Exp AND Exp
             // |    Exp OR Exp
@@ -309,7 +310,8 @@ Type *parse_exp(Node *exp) {
                 fprintf(file_out, "Error type 7 at Line %d: unmatching operands\n",
                         child->lineno);
             }
-        } else if (!strcmp(child->right->name, "LT") ||
+        }
+        else if (!strcmp(child->right->name, "LT") ||
                    !strcmp(child->right->name, "LE") ||
                    !strcmp(child->right->name, "GT") ||
                    !strcmp(child->right->name, "GE") ||
@@ -341,7 +343,8 @@ Type *parse_exp(Node *exp) {
                 fprintf(file_out, "Error type 7 at Line %d: unmatching operands\n",
                         child->lineno);
             }
-        } else if (!strcmp(child->right->name, "LB")) {
+        }
+        else if (!strcmp(child->right->name, "LB")) {
             // |    Exp LB Exp RB
             Node *exp1 = child;
             Node *exp2 = child->right->right;
@@ -357,7 +360,8 @@ Type *parse_exp(Node *exp) {
             } else {
                 type = exp1_type->data.array->base;
             }
-        } else if (!strcmp(child->right->name, "DOT")) {
+        }
+        else if (!strcmp(child->right->name, "DOT")) {
             // |    Exp DOT ID
             Node *exp1 = child;
             Node *member_id = child->right->right;
@@ -382,7 +386,8 @@ Type *parse_exp(Node *exp) {
                 }
             }
         }
-    } else if (!strcmp(child->name, "LP")) {
+    }
+    else if (!strcmp(child->name, "LP")) {
         // |    LP Exp RP
         type = parse_exp(child->right);
     } else if (!strcmp(child->name, "MINUS")) {
@@ -509,7 +514,6 @@ Type *parse_exp(Node *exp) {
 Type *parse_fun_dec(Node *fun_dec, Type *last_type) {
     // FunDec: ID LP VarList RP
     //      |   ID LP RP
-
     Type *type = (Type *) malloc(sizeof(Type));
     type->data.structure = (FieldList *) malloc(sizeof(FieldList));
 
@@ -531,10 +535,9 @@ Type *parse_fun_dec(Node *fun_dec, Type *last_type) {
 }
 
 void parse_comp_st(Node *compst, Type *return_type) {
-    // CompSt: LC DefList StmtList RC
-    Node *def_list = compst->left->right;
-    parse_def_list(def_list, NULL);
-    parse_stmt_list(def_list->right, return_type);
+    // CompSt: LC StmtList RC
+    Node *stmt_list = compst->left->right;
+    parse_stmt_list(stmt_list, return_type);
 }
 
 void parse_stmt(Node *stmt, Type *return_type) {
@@ -587,11 +590,18 @@ void parse_stmt(Node *stmt, Type *return_type) {
 
 void parse_stmt_list(Node *stmt_list, Type *return_type) {
     // StmtList: Epsilon
+    //          |    DefList StmtList
     //          |    Stmt StmtList
-    if (stmt_list->left != NULL) {
+    if (stmt_list->left == NULL) {
+        return;
+    }
+    if (!strcmp(stmt_list->left->name, "Stmt")) {
         Node *stmt = stmt_list->left;
         parse_stmt(stmt, return_type);
         parse_stmt_list(stmt->right, return_type);
+    } else if (!strcmp(stmt_list->left->name, "DefList")) {
+        Node *def_list = stmt_list->left;
+        parse_def_list(def_list, NULL);
     }
 }
 

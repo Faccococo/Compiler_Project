@@ -3,6 +3,7 @@
 
 #include "parse_tree.h"
 #include "type.h"
+#include "stdio.h"
 
 void parse_program(Node *program);
 
